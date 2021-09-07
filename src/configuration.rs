@@ -31,3 +31,4 @@ impl DatabaseSettings {
             self.username, self.password, self.host, self.port
         )
     }
+}
