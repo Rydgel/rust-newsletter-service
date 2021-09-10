@@ -72,9 +72,10 @@ jobs:
         run: |
           sudo apt-get install libpq-dev -y
           SKIP_DOCKER=true ./scripts/init_db.sh
-
-      - name: Run cargo test
-        uses: actions-rs/cargo@v1
+      
+      - name: Check sqlx metadata file
+        run: cargo sqlx prepare --check -- --bin zero2prod
+      - uses: actions-rs/cargo@v1
         with:
           command: test
 
