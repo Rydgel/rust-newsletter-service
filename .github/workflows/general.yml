@@ -37,7 +37,8 @@ jobs:
       - name: Migrate database
         run: |
           sudo apt-get install libpq-dev -y
-          cargo install sqlx-cli --no-default-features --features postgres,runtime-actix-rustls
+          cargo install sqlx-rt --features runtime-actix-rustls
+          cargo install sqlx-cli --no-default-features --features postgres
           SKIP_DOCKER=true ./scripts/init_db.sh
       - name: Check sqlx metadata file
         run: cargo sqlx prepare --check -- --lib
@@ -82,7 +83,8 @@ jobs:
       - name: Migrate database
         run: |
           sudo apt-get install libpq-dev -y
-          cargo install sqlx-cli --no-default-features --features postgres,runtime-actix-rustls
+          cargo install sqlx-rt --features runtime-actix-rustls
+          cargo install sqlx-cli --no-default-features --features postgres
           SKIP_DOCKER=true ./scripts/init_db.sh
       - uses: actions-rs/clippy-check@v1
         with:
@@ -114,7 +116,8 @@ jobs:
       - name: Migrate database
         run: |
           sudo apt-get install libpq-dev -y
-          cargo install sqlx-cli --no-default-features --features postgres,runtime-actix-rustls
+          cargo install sqlx-rt --features runtime-actix-rustls
+          cargo install sqlx-cli --no-default-features --features postgres
           SKIP_DOCKER=true ./scripts/init_db.sh
 
       - name: Run cargo-tarpaulin
