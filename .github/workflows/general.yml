@@ -25,7 +25,7 @@ jobs:
         ports:
           - 5432:5432
     env:
-      SQLX_VERSION: 0.5.11
+      SQLX_VERSION: 0.6.2
       SQLX_FEATURES: postgres
     steps:
       - uses: actions/checkout@v2
@@ -121,3 +121,5 @@ jobs:
         uses: actions-rs/tarpaulin@v0.1
         with:
           args: "--ignore-tests --avoid-cfg-tarpaulin"
+          version: 0.22
+          out-type: Xml
