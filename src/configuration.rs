@@ -1,9 +1,8 @@
 use secrecy::ExposeSecret;
-use secrecy::Secret;
+use secrecy::SecretString;
 use serde_aux::field_attributes::deserialize_number_from_string;
 use sqlx::postgres::PgConnectOptions;
 use sqlx::postgres::PgSslMode;
-use sqlx::ConnectOptions;
 use std::convert::TryFrom;
 
 #[derive(serde::Deserialize)]
@@ -12,10 +11,10 @@ pub struct Settings {
     pub application: ApplicationSettings,
 }
 
-#[derive(serde::Deserialize)]
+#[derive(serde::Deserialize, Clone)]
 pub struct DatabaseSettings {
     pub username: String,
-    pub password: Secret<String>,
+    pub password: SecretString,
     #[serde(deserialize_with = "deserialize_number_from_string")]
     pub port: u16,
     pub host: String,
@@ -60,11 +59,10 @@ pub fn get_configuration() -> Result<Settings, config::ConfigError> {
 }
 
 impl DatabaseSettings {
-    pub fn without_db(&self) -> PgConnectOptions {
+    pub fn connect_options(&self) -> PgConnectOptions {
         let ssl_mode = if self.require_ssl {
             PgSslMode::Require
         } else {
-            // Try an encrypted connection, fallback to unencrypted if it fails
             PgSslMode::Prefer
         };
         PgConnectOptions::new()
@@ -73,12 +71,7 @@ impl DatabaseSettings {
             .password(self.password.expose_secret())
             .port(self.port)
             .ssl_mode(ssl_mode)
-    }
-
-    pub fn with_db(&self) -> PgConnectOptions {
-        let mut options = self.without_db().database(&self.database_name);
-        options.log_statements(log::LevelFilter::Trace);
-        options
+            .database(&self.database_name)
     }
 }
 
